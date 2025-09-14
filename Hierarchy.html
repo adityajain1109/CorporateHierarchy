@@ -1,11 +1,7 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1"
-    />
+    
     <title>Hunnu Air - Corporate Hierarchy (Interactive)</title>
 
     <!-- Poppins font -->
@@ -203,6 +199,33 @@
         display:inline-block;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,0.06);background:#fff;font-size:13px;margin-left:8px;cursor:pointer
       }
 
+      .linked-item {
+        opacity: .9;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      .linked-item .desc {
+        opacity: .75;
+        font-size: 12px;
+        margin-top: 3px;
+      }
+
+      .stakeholders {
+        margin-top:8px;
+        margin-bottom: 10px;
+        font-size: 14px;
+      }
+
+      .stakeholders a {
+        color: var(--pink-700);
+        text-decoration: none;
+      }
+
+      .stakeholders a:hover {
+        text-decoration: underline;
+      }
+
       @media (max-width: 700px) {
         .sidepanel {
           display: none !important;
@@ -213,9 +236,7 @@
 
   <body>
     <div class="wrap">
-      <header>
-        <h1>Hunnu Air — Corporate Hierarchy</h1>
-      </header>
+      
 
       <div
         id="canvas"
@@ -266,8 +287,7 @@
 
     <script>
       /*************************************************************************
-       * Sample data (JSON) - easy to replace with real data
-       * I've added `link` properties and a `keyStakeholders` field for Hunnu Air.
+       * Sample data (JSON) - now with structured keyStakeholders (name + role + link)
        *************************************************************************/
       const DATA = {
         parent: {
@@ -288,8 +308,19 @@
             link: "https://presales.businessbywire.com/appgts/businessnext/detail/Account?x=efa8kjuwhuerm5e7d838b6grkfch5858t8d3mxbfms6cpdgsd36q",
             shareholders: "Hunnu Air Global (85%), Local Investors (15%)",
             financials: "FY24 Revenue: $120M",
-            // NEW: keyStakeholders will show in the sidepanel (not on diagram)
-            keyStakeholders: "Board: T. Enkhbayar, M. Gantulga; Major investors: Hunnu Air Global (85%); Employee ESOP (5%)",
+            // Structured stakeholders: names + optional role + link
+            keyStakeholders: [
+              {
+                name: "Munkhjargal Purevjal",
+                role: "CEO",
+                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=l8vsqv4h9bjbcczqmcgb2rsnp3klg69vfbcnvfcfca7rdncvw9ta&mdi=-1"
+              },
+              {
+                name: "Turbold Tserenkhuu",
+                role: "Director",
+                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=7sr32kvkpkzarsmj5ck9urzqu3d65zfphxvyk6k7gaqg5u8whpeq&mdi=-1"
+              }
+            ],
             dealers: [
               {
                 id: "d1",
@@ -534,22 +565,26 @@
             });
           });
 
-          // Accounts - near-right (move Corporate Banking - UB a bit down, Global Collections slightly down)
+          // Accounts - near-right (moved down to avoid overlap)
           const accounts = sdata.accounts || [];
           accounts.forEach((d, idx) => {
             const x =
               sub.x + sub.w + 90 + idx * (cfg.childBox.w + cfg.childGapX);
-            let y = cfg.childStartY + 140 + idx * cfg.childGapY + si * 6;
+            // base y moved down overall so accounts sit lower and avoid overlaps
+            let y = cfg.childStartY + 180 + idx * (cfg.childBox.h + 20) + si * 6;
+
+            // increase the downward nudge for specific named accounts so they don't overlap
             if (
               d.name &&
               d.name.toLowerCase().includes("corporate banking")
             )
-              y += 30; // move Corporate Banking - UB down
+              y += 80; // moved further down
+
             if (
               d.name &&
               d.name.toLowerCase().includes("global collections")
             )
-              y += 30; // move Global Collections down
+              y += 80; // moved further down
 
             childGroups.push({
               x,
@@ -561,12 +596,21 @@
             });
           });
 
-          // Holdings - below center of subsidiary
+          // Holdings - below center of subsidiary (nudged slightly less than before)
           const holdings = sdata.holdings || [];
           holdings.forEach((d, idx) => {
             const x =
               sub.x + (sub.w - cfg.childBox.w) / 2 + idx * (cfg.childBox.w + 8);
-            const y = sub.y + sub.h + 140 + si * 6;
+            let y = sub.y + sub.h + 140 + si * 6;
+
+            // if the holding is Pacific Holdings or SkyLogix Capital, nudge it slightly (less than before)
+            if (d.name) {
+              const nm = d.name.toLowerCase();
+              if (nm.includes("pacific holdings") || nm.includes("skylogix capital") || nm.includes("skylogix")) {
+                y += 40; // reduced offset from 80 -> 40
+              }
+            }
+
             childGroups.push({
               x,
               y,
@@ -779,7 +823,7 @@
         sidepanel.setAttribute("aria-hidden", "true");
       }
 
-      // build panel HTML: dynamically uses data.link if present; now includes keyStakeholders
+      // build panel HTML: renders structured stakeholders as clickable links
       function buildPanelHtml(data) {
         let html = `<h3>${escapeHtml(data.name)}</h3>`;
         if (data.type && data.type.toLowerCase().includes("subsidiary")) {
@@ -790,8 +834,21 @@
             data.financials || "—"
           )}</p>`;
 
-          // NEW: show keyStakeholders if present
-          if (data.keyStakeholders) {
+          // Render keyStakeholders: supports structured array or fallback string
+          if (Array.isArray(data.keyStakeholders) && data.keyStakeholders.length) {
+            html += `<p class="stakeholders"><strong>Key stakeholders:</strong> `;
+            // join with commas but render each as link if link present
+            const parts = data.keyStakeholders.map((s) => {
+              const nameEsc = escapeHtml(s.name || "");
+              if (s.link) {
+                return `<a href="${escapeJs(s.link)}" target="_blank" rel="noopener noreferrer">${nameEsc}${s.role ? ` — ${escapeHtml(s.role)}` : ""}</a>`;
+              } else {
+                return `${nameEsc}${s.role ? ` — ${escapeHtml(s.role)}` : ""}`;
+              }
+            });
+            html += parts.join(", ") + `</p>`;
+          } else if (data.keyStakeholders) {
+            // fallback for plain string
             html += `<p><strong>Key stakeholders:</strong> ${escapeHtml(data.keyStakeholders)}</p>`;
           }
 
@@ -800,22 +857,13 @@
 
           ["dealers", "suppliers", "accounts", "holdings"].forEach((k) => {
             if (data[k] && data[k].length) {
-              html += `<h5 style=\"margin-bottom:6px\">${capitalize(k)}</h5><ul>`;
+              html += `<h5 style="margin-bottom:6px">${capitalize(k)}</h5><div>`;
               data[k].forEach((item) => {
-                html += `<li><strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(
+                html += `<div class="linked-item"><strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(
                   item.region || "—"
-                )}<div style=\"opacity:.85;font-size:13px\">${escapeHtml(
-                  item.desc || "-"
-                )}</div>`;
-
-                // if linked entity has a link, add a small button
-                if (item.link) {
-                  html += `<div style=\"margin-top:6px\"><button class=\"link-btn\" onclick=\"window.open('${escapeJs(item.link)}','_blank')\">Open</button></div>`;
-                }
-
-                html += `</li>`;
+                )}<div class="desc">${escapeHtml(item.desc || "-")}</div></div>`;
               });
-              html += `</ul>`;
+              html += `</div>`;
             }
           });
         } else {
@@ -824,9 +872,9 @@
 
         // Main View profile: use data.link if available
         if (data.link) {
-          html += `<hr/><p style=\"opacity:.8;font-size:13px\">Actions: <button class=\"link-btn\" onclick=\"window.open('${escapeJs(
+          html += `<hr/><p style="opacity:.8;font-size:13px">Actions: <button class="link-btn" onclick="window.open('${escapeJs(
             data.link
-          )}','_blank')\">View profile</button></p>`;
+          )}','_blank')">View profile</button></p>`;
         }
 
         return html;
@@ -834,17 +882,17 @@
 
       // small helpers
       function escapeHtml(s) {
-        if (!s) return "";
+        if (s === undefined || s === null) return "";
         return String(s)
           .replaceAll("&", "&amp;")
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;");
       }
 
-      // simple JS-escaping for insertion into single-quoted onclick strings
+      // simple JS-escaping for insertion into attributes
       function escapeJs(s) {
         if (!s) return "";
-        return String(s).replaceAll("'", "\\'").replaceAll('"', '\\"');
+        return String(s).replaceAll('"', '&quot;').replaceAll("'", "\\'");
       }
 
       function capitalize(s) {
@@ -869,14 +917,6 @@
           closePanel();
         }
       });
-
-      /*************************************************************************
-       * Notes & customization
-       * - Replace DATA JSON at top to plug in real data
-       * - Each entity may now include a `link` property; the View profile button
-       *   and per-item "Open" buttons will open that url in a new tab.
-       * - `keyStakeholders` is displayed in subsidiary sidepanels (not on diagram).
-       *************************************************************************/
     </script>
   </body>
 </html>
