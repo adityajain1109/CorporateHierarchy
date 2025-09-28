@@ -291,149 +291,106 @@
        *************************************************************************/
       const DATA = {
         parent: {
-          id: "hunnu-global",
-          name: "Hunnu Air Global",
+          id: "saudi-tele-global",
+          name: "Saudi Tele Global",
           type: "Parent",
-          link: "https://presales.businessbywire.com/appgts/businessnext/detail/Account?x=efa8kjuwhuermtn73e2l4s6dkwky5pj7ntwukd9t7c2b5j66jrzq",
-          shareholders:
-            "Founders (60%), Private Investors (25%), Employees (15%)",
-          financials: "FY24 Revenue: $420M, Employees: 4,200",
+          link: "https://example.com/saudi-tele-global",
+          shareholders: "Public (45%), Strategic Investors (35%), Employee Trust (20%)",
+          financials: "FY24 Revenue: $9.2B, Employees: 18,500"
         },
 
         subsidiaries: [
           {
-            id: "hunnu-air",
-            name: "Hunnu Air",
+            id: "saudi-telecom-stc",
+            name: "Saudi Telecom (STC)",
             type: "Subsidiary",
-            link: "https://presales.businessbywire.com/appgts/businessnext/detail/Account?x=efa8kjuwhuerm5e7d838b6grkfch5858t8d3mxbfms6cpdgsd36q",
-            shareholders: "Hunnu Air Global (85%), Local Investors (15%)",
-            financials: "FY24 Revenue: $120M",
-            // Structured stakeholders: names + optional role + link
+            link: "https://example.com/stc",
+            shareholders: "Saudi Tele Global (60%), Public (40%)",
+            financials: "FY24 Revenue: $5.1B",
             keyStakeholders: [
-              {
-                name: "Munkhjargal Purevjal",
-                role: "CEO",
-                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=l8vsqv4h9bjbcczqmcgb2rsnp3klg69vfbcnvfcfca7rdncvw9ta&mdi=-1"
-              },
-              {
-                name: "Turbold Tserenkhuu",
-                role: "Director",
-                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=7sr32kvkpkzarsmj5ck9urzqu3d65zfphxvyk6k7gaqg5u8whpeq&mdi=-1"
-              }
+              { name: "Ahmed Al-Suwailem", role: "CEO", link: "https://example.com/contact/ahmed" },
+              { name: "Fatimah Al-Qahtani", role: "CFO", link: "https://example.com/contact/fatimah" }
             ],
             dealers: [
-              {
-                id: "d1",
-                name: "Ulaanbaatar Logistics",
-                region: "Mongolia",
-                desc: "Regional ticketing partner",
-                link: "https://example.com/ulaanbaatar"
-              },
+              { id: "d-stc-1", name: "STC Retail Network", region: "KSA", desc: "Official retail & dealerships", link: "https://example.com/stc-retail" }
             ],
-
             suppliers: [
-              {
-                id: "s1",
-                name: "AeroParts Co.",
-                region: "China",
-                desc: "Aircraft parts supplier",
-                link: "https://example.com/aeroparts"
-              },
+              { id: "s-stc-1", name: "Global Network Supplies", region: "Germany", desc: "Core network equipment vendor", link: "https://example.com/global-network" }
             ],
             accounts: [
-              {
-                id: "a1",
-                name: "Corporate Banking - UB",
-                region: "Mongolia",
-                desc: "Primary treasury account",
-                link: "https://example.com/corporate-banking-ub"
-              },
+              { id: "a-stc-1", name: "STC Treasury", region: "KSA", desc: "Primary treasury and clearing", link: "https://example.com/stc-treasury" }
             ],
             holdings: [
-              {
-                id: "h1",
-                name: "Hunnu Fleet Investments",
-                region: "Cayman",
-                desc: "Aircraft leasing SPV",
-                link: "https://example.com/hunnu-fleet"
-              },
-            ],
+              { id: "h-stc-1", name: "STC International Holdings", region: "UAE", desc: "Overseas investments and roaming JV", link: "https://example.com/stc-intl" }
+            ]
           },
 
           {
-            id: "pacific-cargo",
-            name: "Pacific Cargo Ltd.",
+            id: "stc-pay",
+            name: "STC Pay",
             type: "Subsidiary",
-            link: "https://presales.businessbywire.com/appgts/businessnext/detail/Account?x=pacific_cargo_link",
-            shareholders: "Hunnu Air Global (70%), Partners (30%)",
-            financials: "FY24 Revenue: $98M",
-
+            link: "https://example.com/stc-pay",
+            shareholders: "Saudi Telecom (STC) (100%)",
+            financials: "FY24 Revenue: $420M",
+            keyStakeholders: [
+              { name: "Noura Al-Mutairi", role: "Head – Digital Payments", link: "https://example.com/contact/noura" }
+            ],
+            dealers: [],
             suppliers: [
-              {
-                id: "s3",
-                name: "CargoTech Supplies",
-                region: "Korea",
-                desc: "Logistics equipment supplier",
-                link: "https://example.com/cargotech"
-              },
+              { id: "s-pay-1", name: "FinTech Integrations Ltd.", region: "India", desc: "Payment gateway & integration partner", link: "https://example.com/fintech" }
             ],
             accounts: [
-              {
-                id: "a2",
-                name: "Global Collections",
-                region: "Singapore",
-                desc: "Receivables & treasury",
-                link: "https://example.com/global-collections"
-              },
+              { id: "a-pay-1", name: "STC Pay Settlement Account", region: "KSA", desc: "Customer settlements & clearing", link: "https://example.com/stcpay-account" }
             ],
-            holdings: [
-              {
-                id: "h2",
-                name: "Pacific Holdings",
-                region: "BVI",
-                desc: "Investment holding",
-                link: "https://example.com/pacific-holdings"
-              },
-            ],
+            holdings: []
           },
 
           {
-            id: "skylogix",
-            name: "SkyLogix Holdings",
+            id: "stc-enterprise",
+            name: "STC Enterprise (Solutions)",
             type: "Subsidiary",
-            link: "https://presales.businessbywire.com/appgts/businessnext/detail/Account?x=skylogix_link",
-            shareholders: "Hunnu Air Global (60%), VC Funds (40%)",
-            financials: "FY24 Revenue: $205M",
-
+            link: "https://example.com/stc-enterprise",
+            shareholders: "Saudi Telecom (STC) (100%)",
+            financials: "FY24 Revenue: $1.3B",
+            keyStakeholders: [
+              { name: "Omar Al-Harbi", role: "SVP – Enterprise", link: "https://example.com/contact/omar" }
+            ],
+            dealers: [
+              { id: "d-ent-1", name: "Enterprise Channel Partners", region: "KSA", desc: "Corporate resellers & systems integrators", link: "https://example.com/enterprise-partners" }
+            ],
             suppliers: [
-              {
-                id: "s5",
-                name: "NavSys Ltd.",
-                region: "Germany",
-                desc: "Navigation & avionics",
-                link: "https://example.com/navsys"
-              },
+              { id: "s-ent-1", name: "CloudInfra Inc.", region: "US", desc: "Cloud infrastructure provider", link: "https://example.com/cloudinfra" }
             ],
             accounts: [
-              {
-                id: "a3",
-                name: "Operations Account",
-                region: "UK",
-                desc: "Ops & vendor payments",
-                link: "https://example.com/operations-account"
-              },
+              { id: "a-ent-1", name: "Enterprise Finance Account", region: "KSA", desc: "Receivables & corporate billing", link: "https://example.com/enterprise-account" }
             ],
             holdings: [
-              {
-                id: "h3",
-                name: "SkyLogix Capital",
-                region: "UK",
-                desc: "Strategic investments",
-                link: "https://example.com/skylogix-capital"
-              },
-            ],
+              { id: "h-ent-1", name: "STC Data Centers", region: "KSA", desc: "Colocation & data centre assets", link: "https://example.com/stc-dc" }
+            ]
           },
-        ],
+
+          {
+            id: "saudi-fiber-networks",
+            name: "Saudi Fiber Networks",
+            type: "Subsidiary",
+            link: "https://example.com/saudi-fiber",
+            shareholders: "Saudi Tele Global (75%), Infrastructure Investors (25%)",
+            financials: "FY24 Revenue: $850M",
+            keyStakeholders: [
+              { name: "Laila Al-Fahad", role: "COO – Networks", link: "https://example.com/contact/laila" }
+            ],
+            dealers: [],
+            suppliers: [
+              { id: "s-fiber-1", name: "OptiCable Ltd.", region: "China", desc: "Fiber & cable supplier", link: "https://example.com/opticable" }
+            ],
+            accounts: [
+              { id: "a-fiber-1", name: "Network Operations Account", region: "KSA", desc: "Vendor payments & operations", link: "https://example.com/network-account" }
+            ],
+            holdings: [
+              { id: "h-fiber-1", name: "Fiber Infra SPV", region: "KSA", desc: "Right-of-way & long-term infrastructure holds", link: "https://example.com/fiber-spv" }
+            ]
+          }
+        ]
       };
 
       /*************************************************************************
