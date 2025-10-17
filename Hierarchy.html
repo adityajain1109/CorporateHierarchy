@@ -2,7 +2,7 @@
 <html>
   <head>
     
-    <title>Hunnu Air - Corporate Hierarchy (Interactive)</title>
+    <title>Hunnu Air - Corporate Hierarchy (Interactive) - Blue Theme</title>
 
     <!-- Poppins font -->
     <link
@@ -12,12 +12,13 @@
 
     <style>
       :root {
-        --pink-900: #e65b85; /* parent - slightly lighter than before */
-        --pink-700: #ff6fa3; /* subsidiary */
-        --pink-200: #ffe6ef; /* child */
+        /* Blue theme colors */
+        --blue-900: #0b63d6; /* parent - deep blue */
+        --blue-700: #2b8cff; /* subsidiary */
+        --blue-200: #e6f2ff; /* child background */
         --bg: #ffffff;
-        --text: #222;
-        --shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        --text: #0f1724;
+        --shadow: 0 8px 24px rgba(11, 99, 214, 0.08);
         --radius: 12px;
         --font-sans: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto,
           "Helvetica Neue", Arial;
@@ -27,7 +28,7 @@
       body {
         height: 100%;
         margin: 0;
-        background: var(--bg);
+        background: linear-gradient(180deg, #fbfdff 0%, #ffffff 100%);
         font-family: var(--font-sans);
         color: var(--text);
       }
@@ -59,7 +60,7 @@
       #canvas {
         flex: 1;
         border-radius: 10px;
-        background: linear-gradient(180deg, #fff 0%, #fff 100%);
+        background: linear-gradient(180deg, #fff 0%, #f7fbff 100%);
         position: relative;
         overflow: hidden;
       }
@@ -77,8 +78,8 @@
       }
 
       .node-rect {
-        fill: var(--pink-200);
-        stroke: var(--pink-700);
+        fill: var(--blue-200);
+        stroke: var(--blue-700);
         stroke-width: 2;
         rx: 12;
         ry: 12;
@@ -89,12 +90,14 @@
         font-weight: 600;
         font-size: 14px;
         text-anchor: start;
+        fill: var(--text);
       }
 
       .node-sub {
         font-size: 12px;
         opacity: 0.85;
         text-anchor: start;
+        fill: var(--text);
       }
 
       /* center text in parent/subsidiary nodes */
@@ -104,54 +107,65 @@
 
       /* Parent & subsidiary variants */
       .parent .node-rect {
-        fill: var(--pink-900);
-        stroke: var(--pink-900);
+        fill: var(--blue-900);
+        stroke: var(--blue-900);
       }
 
       .parent .node-title,
       .parent .node-sub {
-        color: white;
+        /* white text for high contrast */
+        fill: #fff;
       }
 
       .subsidiary .node-rect {
-        fill: var(--pink-700);
-        stroke: var(--pink-700);
+        fill: var(--blue-700);
+        stroke: var(--blue-700);
       }
 
       .subsidiary .node-title {
-        color: white;
+        fill: #fff;
       }
 
       .child .node-rect {
         fill: var(--bg);
-        stroke: var(--pink-700);
+        stroke: var(--blue-700);
       }
 
       .child .node-title {
-        color: var(--pink-700);
+        fill: var(--blue-700);
       }
+
+      /* font-size hierarchy: parent largest, subsidiary medium, child smallest */
+      .parent .node-title { font-size: 20px; }
+      .parent .node-sub { font-size: 14px; opacity: 0.95; }
+
+      .subsidiary .node-title { font-size: 16px; }
+      .subsidiary .node-sub { font-size: 13px; opacity: 0.9; }
+
+      .child .node-title { font-size: 13px; }
+      .child .node-sub { font-size: 12px; opacity: 0.85; }
 
       /* connector */
       .connector {
         fill: none;
-        stroke: #c94a74;
+        stroke: #4b90ff;
         stroke-width: 2;
       }
 
       .connector.parent {
-        stroke: #9b2850;
+        stroke: #0b63d6;
       }
 
       /* tooltip */
       .tooltip {
         position: absolute;
         display: none;
-        background: white;
+        background: #ffffff;
         border-radius: 8px;
         padding: 10px;
         box-shadow: var(--shadow);
-        max-width: 320px;
-        border: 1px solid rgba(0, 0, 0, 0.06);
+        max-width: 360px;
+        border: 1px solid rgba(11, 99, 214, 0.08);
         font-size: 14px;
       }
 
@@ -171,7 +185,7 @@
         position: absolute;
         right: 12px;
         top: 12px;
-        width: 360px;
+        width: 380px;
         max-width: 40%;
         height: 76%;
         background: white;
@@ -180,7 +194,7 @@
         padding: 16px;
         display: none;
         overflow: auto;
-        border: 1px solid rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(11, 99, 214, 0.06);
       }
 
       .sidepanel h3 {
@@ -196,11 +210,11 @@
       }
 
       .link-btn{
-        display:inline-block;padding:6px 10px;border-radius:6px;border:1px solid rgba(0,0,0,0.06);background:#fff;font-size:13px;margin-left:8px;cursor:pointer
+        display:inline-block;padding:6px 10px;border-radius:6px;border:1px solid rgba(11,99,214,0.1);background:#fff;font-size:13px;margin-left:8px;cursor:pointer
       }
 
       .linked-item {
-        opacity: .9;
+        opacity: .95;
         font-size: 13px;
         margin-bottom: 8px;
       }
@@ -218,7 +232,7 @@
       }
 
       .stakeholders a {
-        color: var(--pink-700);
+        color: var(--blue-700);
         text-decoration: none;
       }
 
@@ -274,7 +288,7 @@
               markerHeight="6"
               orient="auto-start-reverse"
             >
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#c94a74" />
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b90ff" />
             </marker>
           </defs>
 
@@ -291,106 +305,149 @@
        *************************************************************************/
       const DATA = {
         parent: {
-          id: "saudi-tele-global",
-          name: "Saudi Tele Global",
+          id: "hunnu-global",
+          name: "Hunnu Air Global",
           type: "Parent",
-          link: "https://example.com/saudi-tele-global",
-          shareholders: "Public (45%), Strategic Investors (35%), Employee Trust (20%)",
-          financials: "FY24 Revenue: $9.2B, Employees: 18,500"
+          link: "https://presales.businessbywire.com/appgts/businessnext/detail/Account?x=efa8kjuwhuermtn73e2l4s6dkwky5pj7ntwukd9t7c2b5j66jrzq",
+          shareholders:
+            "Founders (60%), Private Investors (25%), Employees (15%)",
+          financials: "FY24 Revenue: ₮420M, Employees: 4,200",
         },
 
         subsidiaries: [
           {
-            id: "saudi-telecom-stc",
-            name: "Saudi Telecom (STC)",
+            id: "hunnu-air",
+            name: "Hunnu Air",
             type: "Subsidiary",
-            link: "https://presales.businessbywire.com/appgts/businessnext/detail/Account?x=tzgrv8ubxj64b4kajaukxzjsxwqk23yejarrzjwuwsbfgul2lnatjwal4lpl5zg4bhannu5n76tnf3snw768cz3mrj77krs27wsuf8dwrtlar3tvpeedawczjtpf8yszyby3u3b8qdcj629fs44xdzqkudh8bedatbpw59mq6clxfzbz862le8lt4agf22dpe3uuqs36a4tej54eh33hwgs2ytrv3rkrtwkbhfz&mdi=-1",
-            shareholders: "Saudi Tele Global (60%), Public (40%)",
-            financials: "FY24 Revenue: $5.1B",
+            link: "https://presales.businessbywire.com/appgts/businessnext/detail/Account?x=efa8kjuwhuerm5e7d838b6grkfch5858t8d3mxbfms6cpdgsd36q",
+            shareholders: "Hunnu Air Global (85%), Local Investors (15%)",
+            financials: "FY24 Revenue: ₮120M",
+            // Structured stakeholders: names + optional role + link
             keyStakeholders: [
-              { name: "Ahmed Al-Suwailem", role: "CEO", link: "https://example.com/contact/ahmed" },
-              { name: "Fatimah Al-Qahtani", role: "CFO", link: "https://example.com/contact/fatimah" }
+              {
+                name: "Munkhjargal Purevjal",
+                role: "CEO",
+                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=l8vsqv4h9bjbcczqmcgb2rsnp3klg69vfbcnvfcfca7rdncvw9ta&mdi=-1"
+              },
+              {
+                name: "Turbold Tserenkhuu",
+                role: "Director",
+                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=7sr32kvkpkzarsmj5ck9urzqu3d65zfphxvyk6k7gaqg5u8whpeq&mdi=-1"
+              }
             ],
             dealers: [
-              { id: "d-stc-1", name: "STC Retail Network", region: "KSA", desc: "Official retail & dealerships", link: "https://example.com/stc-retail" }
+              {
+                id: "d1",
+                name: "Ulaanbaatar Logistics",
+                region: "Mongolia",
+                desc: "Regional ticketing partner",
+                link: "https://example.com/ulaanbaatar"
+              },
             ],
+
             suppliers: [
-              { id: "s-stc-1", name: "Global Network Supplies", region: "Germany", desc: "Core network equipment vendor", link: "https://example.com/global-network" }
+              {
+                id: "s1",
+                name: "AeroParts Co.",
+                region: "China",
+                desc: "Aircraft parts supplier",
+                link: "https://example.com/aeroparts"
+              },
             ],
             accounts: [
-              { id: "a-stc-1", name: "STC Treasury", region: "KSA", desc: "Primary treasury and clearing", link: "https://example.com/stc-treasury" }
+              {
+                id: "a1",
+                name: "Corporate Banking - UB",
+                region: "Mongolia",
+                desc: "Primary treasury account",
+                link: "https://example.com/corporate-banking-ub"
+              },
             ],
             holdings: [
-              { id: "h-stc-1", name: "STC International Holdings", region: "UAE", desc: "Overseas investments and roaming JV", link: "https://example.com/stc-intl" }
-            ]
+              {
+                id: "h1",
+                name: "Hunnu Fleet Investments",
+                region: "Cayman",
+                desc: "Aircraft leasing SPV",
+                link: "https://example.com/hunnu-fleet"
+              },
+            ],
           },
 
           {
-            id: "stc-pay",
-            name: "STC Pay",
+            id: "pacific-cargo",
+            name: "Pacific Cargo Ltd.",
             type: "Subsidiary",
-            link: "https://example.com/stc-pay",
-            shareholders: "Saudi Telecom (STC) (100%)",
-            financials: "FY24 Revenue: $420M",
-            keyStakeholders: [
-              { name: "Mohammed K. Al-Saud", role: "Head – Digital Payments", link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=6uxajv6x75sajr77xtllu3hzv4xn4bzggs687lz5m5zydq9pn2awqc79phsefmegzv3rlrgrhyanljc9y3hsm2czskrhnydx7vc7ytsn8tkbbs6kuthy84jqddtah5bqeyws8lnhjejx94upvrsgn8ufmxaq2bjblkghfzdew4kfvpsn5a7tucr4s6lan84zt24r33wseejgd&mdi=-1" }
-            ],
-            dealers: [],
+            link: "https://presales.businessbywire.com/appgts/businessnext/detail/Account?x=pacific_cargo_link",
+            shareholders: "Hunnu Air Global (70%), Partners (30%)",
+            financials: "FY24 Revenue: ₮98M",
+
             suppliers: [
-              { id: "s-pay-1", name: "FinTech Integrations Ltd.", region: "India", desc: "Payment gateway & integration partner", link: "https://example.com/fintech" }
+              {
+                id: "s3",
+                name: "CargoTech Supplies",
+                region: "Korea",
+                desc: "Logistics equipment supplier",
+                link: "https://example.com/cargotech"
+              },
             ],
             accounts: [
-              { id: "a-pay-1", name: "STC Pay Settlement Account", region: "KSA", desc: "Customer settlements & clearing", link: "https://example.com/stcpay-account" }
+              {
+                id: "a2",
+                name: "Global Collections",
+                region: "Singapore",
+                desc: "Receivables & treasury",
+                link: "https://example.com/global-collections"
+              },
             ],
-            holdings: []
+            holdings: [
+              {
+                id: "h2",
+                name: "Pacific Holdings",
+                region: "BVI",
+                desc: "Investment holding",
+                link: "https://example.com/pacific-holdings"
+              },
+            ],
           },
 
           {
-            id: "stc-enterprise",
-            name: "STC Enterprise (Solutions)",
+            id: "skylogix",
+            name: "SkyLogix Holdings",
             type: "Subsidiary",
-            link: "https://example.com/stc-enterprise",
-            shareholders: "Saudi Telecom (STC) (100%)",
-            financials: "FY24 Revenue: $1.3B",
-            keyStakeholders: [
-              { name: "Omar Al-Harbi", role: "SVP – Enterprise", link: "https://example.com/contact/omar" }
-            ],
-            dealers: [
-              { id: "d-ent-1", name: "Enterprise Channel Partners", region: "KSA", desc: "Corporate resellers & systems integrators", link: "https://example.com/enterprise-partners" }
-            ],
-            suppliers: [
-              { id: "s-ent-1", name: "CloudInfra Inc.", region: "US", desc: "Cloud infrastructure provider", link: "https://example.com/cloudinfra" }
-            ],
-            accounts: [
-              { id: "a-ent-1", name: "Enterprise Finance Account", region: "KSA", desc: "Receivables & corporate billing", link: "https://example.com/enterprise-account" }
-            ],
-            holdings: [
-              { id: "h-ent-1", name: "STC Data Centers", region: "KSA", desc: "Colocation & data centre assets", link: "https://example.com/stc-dc" }
-            ]
-          },
+            link: "https://presales.businessbywire.com/appgts/businessnext/detail/Account?x=skylogix_link",
+            shareholders: "Hunnu Air Global (60%), VC Funds (40%)",
+            financials: "FY24 Revenue: 205M",
 
-          {
-            id: "saudi-fiber-networks",
-            name: "Saudi Fiber Networks",
-            type: "Subsidiary",
-            link: "https://example.com/saudi-fiber",
-            shareholders: "Saudi Tele Global (75%), Infrastructure Investors (25%)",
-            financials: "FY24 Revenue: $850M",
-            keyStakeholders: [
-              { name: "Laila Al-Fahad", role: "COO – Networks", link: "https://example.com/contact/laila" }
-            ],
-            dealers: [],
             suppliers: [
-              { id: "s-fiber-1", name: "OptiCable Ltd.", region: "China", desc: "Fiber & cable supplier", link: "https://example.com/opticable" }
+              {
+                id: "s5",
+                name: "NavSys Ltd.",
+                region: "Germany",
+                desc: "Navigation & avionics",
+                link: "https://example.com/navsys"
+              },
             ],
             accounts: [
-              { id: "a-fiber-1", name: "Network Operations Account", region: "KSA", desc: "Vendor payments & operations", link: "https://example.com/network-account" }
+              {
+                id: "a3",
+                name: "Operations Account",
+                region: "UK",
+                desc: "Ops & vendor payments",
+                link: "https://example.com/operations-account"
+              },
             ],
             holdings: [
-              { id: "h-fiber-1", name: "Fiber Infra SPV", region: "KSA", desc: "Right-of-way & long-term infrastructure holds", link: "https://example.com/fiber-spv" }
-            ]
-          }
-        ]
+              {
+                id: "h3",
+                name: "SkyLogix Capital",
+                region: "UK",
+                desc: "Strategic investments",
+                link: "https://example.com/skylogix-capital"
+              },
+            ],
+          },
+        ],
       };
 
       /*************************************************************************
@@ -629,7 +686,8 @@
         } else {
           title.setAttribute("x", x + 14);
         }
-        title.setAttribute("y", y + 30);
+        // vertical position tweaked for larger parent font
+        title.setAttribute("y", y + 34);
         title.setAttribute("class", "node-title");
         title.textContent = nodeObj.data.name;
         g.appendChild(title);
@@ -642,7 +700,7 @@
         if (g.classList.contains("centered"))
           subtitle.setAttribute("x", x + w / 2);
         else subtitle.setAttribute("x", x + 14);
-        subtitle.setAttribute("y", y + 52);
+        subtitle.setAttribute("y", y + 58);
         subtitle.setAttribute("class", "node-sub");
         if (variant === "parent") subtitle.textContent = nodeObj.data.type || "Parent";
         else if (variant === "subsidiary")
@@ -762,7 +820,7 @@
         const offsetY = 10;
         // ensure tooltip doesn't go off-screen
         tooltip.style.left =
-          Math.min(pageX - rect.left + offsetX, rect.width - 300) + "px";
+          Math.min(pageX - rect.left + offsetX, rect.width - 320) + "px";
         tooltip.style.top =
           Math.min(pageY - rect.top + offsetY, rect.height - 80) + "px";
       }
