@@ -10,30 +10,28 @@
     />
 
     <style>
-      :root {
-  --blue-900: #006d5b;   /* Parent – rich teal green */
-  --blue-700: #00a896;   /* Subsidiary – bright aqua */
-  --blue-200: #e3f9f6;   /* Child – mint background */
-  --bg: #ffffff;
-  --text: #063b36;
-  --shadow: 0 8px 24px rgba(0, 168, 150, 0.1);
+:root {
+  --blue-900: #6EAAD7;   /* Parent – lavender steel blue */
+  --blue-700: #9FCBE7;   /* Subsidiary – soft pastel blue */
+  --blue-200: #CFECF7;   /* Child – gentle sky-lavender */
+  --bg: #F6FBFD;         /* Page background – off-white pastel */
+  --text: #000000;       /* Deep slate-blue for contrast */
+  --shadow: 0 8px 22px rgba(110, 170, 215, 0.18);
   --radius: 12px;
   --font-sans: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
-
-
       html, body {
         height: 100%;
         margin: 0;
-        background: linear-gradient(180deg, #fbfdff 0%, #ffffff 100%);
+        background: linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
         font-family: var(--font-sans);
         color: var(--text);
       }
 
       .wrap { padding: 18px; box-sizing: border-box; height: 100vh; display: flex; flex-direction: column; gap: 12px; }
       header { display: flex; gap: 12px; align-items: center; justify-content: center; flex-direction: column; text-align: center; }
-      header h1 { margin: 0; font-size: 20px; font-weight: 700; }
+      header h1 { margin: 0; font-size: 20px; font-weight: 700;}
 
       #canvas { flex: 1; border-radius: 10px; background: linear-gradient(180deg, #fff 0%, #f7fbff 100%); position: relative; overflow: hidden; }
       svg { width: 100%; height: 100%; display: block; }
@@ -49,10 +47,13 @@
       .parent .node-title, .parent .node-sub { fill: #fff; }
 
       .subsidiary .node-rect { fill: var(--blue-700); stroke: var(--blue-700); }
-      .subsidiary .node-title { fill: #fff; }
+      .subsidiary .node-title { fill: #000; }
+      
+      .child .node-rect { fill: var(--bg); stroke: var(--blue-900); }
+      .child .node-title { fill: var(--blue-900); }
 
-      .child .node-rect { fill: var(--bg); stroke: var(--blue-700); }
-      .child .node-title { fill: var(--blue-700); }
+      /* ✅ NEW: center-align child node text */
+      .child .node-title, .child .node-sub { text-anchor: middle; }
 
       .parent .node-title { font-size: 20px; }
       .parent .node-sub { font-size: 14px; opacity: 0.95; }
@@ -64,19 +65,18 @@
      /* 🌿 Petro-Green & Teal connector + arrow colors */
 .connector {
   fill: none;
-  stroke: #00a896;          /* main connector line (aqua-teal) */
+  stroke: #6EAAD7;          /* main connector line (aqua-teal) */
   stroke-width: 2;
 }
 
 .connector.parent {
-  stroke: #006d5b;          /* darker teal for parent lines */
+  stroke: #6EAAD7;          /* darker teal for parent lines */
 }
 
 /* arrowhead color to match connector */
 marker#arrow path {
-  fill: #00a896;
+  fill: #6EAAD7;
 }
-
 
       .tooltip {
         position: absolute; display: none; background: #ffffff; border-radius: 8px; padding: 10px;
@@ -98,7 +98,7 @@ marker#arrow path {
       .linked-item .desc { opacity: .75; font-size: 12px; margin-top: 3px; }
 
       .stakeholders { margin-top:8px; margin-bottom: 10px; font-size: 14px; }
-      .stakeholders a { color: var(--blue-700); text-decoration: none; }
+      .stakeholders a { color: var(#000); text-decoration: none; }
       .stakeholders a:hover { text-decoration: underline; }
 
       @media (max-width: 700px) { .sidepanel { display: none !important; } }
@@ -155,12 +155,12 @@ marker#arrow path {
               {
                 name: "Mr. Yazed Abdul Rahman Al-Hamid",
                 role: "CFO",
-                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=6uxajv6x75sajr77xtllu3hzv4xn4bzggs687lcfbf752kqlntm52u4uazpafxctp94qh992z32lyfmvd5ktwvtdxe3kd4f76apsy8yuw25y983kh4hfbwleskmxkd8e494s8e8fqytqa7e69lkcv96dm574qglulabark7vcu2jyjuvhmh7sx4ajrzcj6dksx23be39vpwdx2dztzed6zbmckwfetzswr44mgrbvqsptskeynuq"
+                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=6uxajv6x75sajr77xtllu3hzv4xn4bzggs687lcfbf752kqlntm52u4uazpafxctp94qh992z32lyfmvd5ktwvtdxe3kd4f76apsy8yuw25y983kh4hfbwleskmxkd8e494s8e8fqytqa7e69lkcv96dm574qglulabark7vcu2jyjuvhmh7sx4ajrzcj6dksx23be39vpwdnzjc3nqnhllwc7ytx8rzgvavtewgz4m4n8brpbba"
               },
               {
                 name: "Mr. Mohammed T. Al-Nahhas",
                 role: "CEO",
-                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=6uxajv6x75sajr77xtllu3hzv4xn4bzggs687lcfbf752kqlntm52u4uazpafxctp94qh992z32lyfmvd5ktwvtdxe3kd4f76apsy8yuw25y983kh4hfbwleskmxkd8e494s8e8fqytqa7e69lkcv96dm574qglulabark7vcu2jyjuvhmh7sx4ajrzcj6dksx23be39vpwdnzjc3nqnhllwc7ytx8rzgvavtewgz4m4n8brpbba"
+                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=6uxajv6x75sajr77xtllu3hzv4xn4bzggs687lcfbf752kqlntm52u4uazpafxctp94qh992z32lyfmvd5ktwvtdxe3kd4f76apsy8yuw25y983kh4hfbwleskmxkd8e494s8e8fqytqa7e69lkcv96dm574qglulabark7vcu2jyjuvhmh7sx4ajrzcj6dksx23be39vpwdx2dztzed6zbmckwfetzswr44mgrbvqsptskeynuq"
               }
             ],
             
@@ -362,7 +362,8 @@ marker#arrow path {
         const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
         g.classList.add("node-box");
         if (variant) g.classList.add(variant);
-        if (variant === "parent" || variant === "subsidiary") g.classList.add("centered");
+        // ✅ NEW: also center child nodes
+        if (variant === "parent" || variant === "subsidiary" || variant === "child") g.classList.add("centered");
 
         const { x, y, w, h } = nodeObj;
 
@@ -478,7 +479,6 @@ marker#arrow path {
       }
 
       // Unified, fixed panel builder
-      // build panel HTML: renders structured stakeholders + linked entities
 function buildPanelHtml(data, variant, kind) {
   let html = `<h3>${escapeHtml(data.name)}</h3>`;
 
@@ -501,7 +501,6 @@ function buildPanelHtml(data, variant, kind) {
     html += `<p><strong>Shareholders:</strong> ${escapeHtml(data.Shareholders || data.shareholders || "—")}</p>`;
     html += `<p><strong>Financials:</strong> ${escapeHtml(data.Financials || data.financials || "—")}</p>`;
 
-    // Key Stakeholders
     const stakeholders = data.KeyStakeholders || data.keyStakeholders || [];
     if (stakeholders.length > 0) {
       html += `<hr/><div class="stakeholders"><strong>Key Stakeholders:</strong>
@@ -519,7 +518,6 @@ function buildPanelHtml(data, variant, kind) {
       html += `</ul></div>`;
     }
 
-    // ✅ Linked Entities section (added)
     const groups = [
       { title: "Dealers", items: data.dealers },
       { title: "Suppliers", items: data.suppliers },
@@ -571,7 +569,6 @@ function buildPanelHtml(data, variant, kind) {
 
   return html;
 }
-
 
       // helpers
       function escapeHtml(s) {
