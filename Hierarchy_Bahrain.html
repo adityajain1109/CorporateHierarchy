@@ -10,16 +10,17 @@
     />
 
     <style>
-      :root {
-        --blue-900: #006d5b;   /* Parent – rich teal green */
-        --blue-700: #00a896;   /* Subsidiary – bright aqua */
-        --blue-200: #e3f9f6;   /* Child – mint background */
-        --bg: #ffffff;
-        --text: #063b36;
-        --shadow: 0 8px 24px rgba(0, 168, 150, 0.1);
-        --radius: 12px;
-        --font-sans: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      }
+     :root {
+  --blue-900: #6EAAD7;   /* Parent – lavender steel blue */
+  --blue-700: #9FCBE7;   /* Subsidiary – soft pastel blue */
+  --blue-200: #CFECF7;   /* Child – gentle sky-lavender */
+  --bg: #F6FBFD;         /* Page background – off-white pastel */
+  --text: #000000;       /* Deep slate-blue for contrast */
+  --shadow: 0 8px 22px rgba(110, 170, 215, 0.18);
+  --radius: 12px;
+  --font-sans: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
 
       html, body {
         height: 100%;
@@ -44,13 +45,16 @@
       .centered text { text-anchor: middle; }
 
       .parent .node-rect { fill: var(--blue-900); stroke: var(--blue-900); }
+      .child .node-title, .child .node-sub { text-anchor: middle; }
+
       .parent .node-title, .parent .node-sub { fill: #fff; }
-
+		
       .subsidiary .node-rect { fill: var(--blue-700); stroke: var(--blue-700); }
-      .subsidiary .node-title { fill: #fff; }
+      .subsidiary .node-title { fill: #000; }
+      
 
-      .child .node-rect { fill: var(--bg); stroke: var(--blue-700); }
-      .child .node-title { fill: var(--blue-700); }
+      .child .node-rect { fill: var(--bg); stroke: var(--blue-900); }
+      .child .node-title { fill: var(--blue-900); }
 
       .parent .node-title { font-size: 20px; }
       .parent .node-sub { font-size: 14px; opacity: 0.95; }
@@ -59,19 +63,20 @@
       .child .node-title { font-size: 13px; }
       .child .node-sub { font-size: 12px; opacity: 0.85; }
 
-      .connector {
-        fill: none;
-        stroke: #00a896;
-        stroke-width: 2;
-      }
+     .connector {
+  fill: none;
+  stroke: #6EAAD7;          /* main connector line (aqua-teal) */
+  stroke-width: 2;
+}
 
-      .connector.parent {
-        stroke: #006d5b;
-      }
+.connector.parent {
+  stroke: #6EAAD7;          /* darker teal for parent lines */
+}
 
-      marker#arrow path {
-        fill: #00a896;
-      }
+/* arrowhead color to match connector */
+marker#arrow path {
+  fill: #6EAAD7;
+}
 
       .tooltip {
         position: absolute; display: none; background: #ffffff; border-radius: 8px; padding: 10px;
@@ -93,7 +98,7 @@
       .linked-item .desc { opacity: .75; font-size: 12px; margin-top: 3px; }
 
       .stakeholders { margin-top:8px; margin-bottom: 10px; font-size: 14px; }
-      .stakeholders a { color: var(--blue-700); text-decoration: none; }
+      .stakeholders a { color: var(#000); text-decoration: none; }
       .stakeholders a:hover { text-decoration: underline; }
 
       @media (max-width: 700px) { .sidepanel { display: none !important; } }
@@ -367,7 +372,7 @@
         rect.setAttribute("rx", 12); rect.setAttribute("ry", 12);
         rect.classList.add("node-rect");
         g.appendChild(rect);
-
+		if (variant === "parent" || variant === "subsidiary" || variant === "child") g.classList.add("centered");
         const title = document.createElementNS("http://www.w3.org/2000/svg", "text");
         title.setAttribute("x", g.classList.contains("centered") ? x + w / 2 : x + 14);
         title.setAttribute("y", y + 34);
@@ -471,6 +476,7 @@
         sidepanel.style.display = "none";
         sidepanel.setAttribute("aria-hidden", "true");
       }
+      
 
       function buildPanelHtml(data, variant, kind) {
         let html = `<h3>${escapeHtml(data.name)}</h3>`;
