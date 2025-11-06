@@ -1,0 +1,625 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Qatar Energy - Corporate Hierarchy (Interactive) - Blue Theme</title>
+
+    <!-- Poppins font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+  --blue-900: #006d5b;   /* Parent – rich teal green */
+  --blue-700: #00a896;   /* Subsidiary – bright aqua */
+  --blue-200: #e3f9f6;   /* Child – mint background */
+  --bg: #ffffff;
+  --text: #063b36;
+  --shadow: 0 8px 24px rgba(0, 168, 150, 0.1);
+  --radius: 12px;
+  --font-sans: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+
+
+      html, body {
+        height: 100%;
+        margin: 0;
+        background: linear-gradient(180deg, #fbfdff 0%, #ffffff 100%);
+        font-family: var(--font-sans);
+        color: var(--text);
+      }
+
+      .wrap { padding: 18px; box-sizing: border-box; height: 100vh; display: flex; flex-direction: column; gap: 12px; }
+      header { display: flex; gap: 12px; align-items: center; justify-content: center; flex-direction: column; text-align: center; }
+      header h1 { margin: 0; font-size: 20px; font-weight: 700; }
+
+      #canvas { flex: 1; border-radius: 10px; background: linear-gradient(180deg, #fff 0%, #f7fbff 100%); position: relative; overflow: hidden; }
+      svg { width: 100%; height: 100%; display: block; }
+
+      .node-box { pointer-events: auto; }
+      .node-rect { fill: var(--blue-200); stroke: var(--blue-700); stroke-width: 2; rx: 12; ry: 12; filter: drop-shadow(var(--shadow)); }
+      .node-title { font-weight: 600; font-size: 14px; text-anchor: start; fill: var(--text); }
+      .node-sub { font-size: 12px; opacity: 0.85; text-anchor: start; fill: var(--text); }
+
+      .centered text { text-anchor: middle; }
+
+      .parent .node-rect { fill: var(--blue-900); stroke: var(--blue-900); }
+      .parent .node-title, .parent .node-sub { fill: #fff; }
+
+      .subsidiary .node-rect { fill: var(--blue-700); stroke: var(--blue-700); }
+      .subsidiary .node-title { fill: #fff; }
+
+      .child .node-rect { fill: var(--bg); stroke: var(--blue-700); }
+      .child .node-title { fill: var(--blue-700); }
+
+      .parent .node-title { font-size: 20px; }
+      .parent .node-sub { font-size: 14px; opacity: 0.95; }
+      .subsidiary .node-title { font-size: 16px; }
+      .subsidiary .node-sub { font-size: 13px; opacity: 0.9; }
+      .child .node-title { font-size: 13px; }
+      .child .node-sub { font-size: 12px; opacity: 0.85; }
+
+     /* 🌿 Petro-Green & Teal connector + arrow colors */
+.connector {
+  fill: none;
+  stroke: #00a896;          /* main connector line (aqua-teal) */
+  stroke-width: 2;
+}
+
+.connector.parent {
+  stroke: #006d5b;          /* darker teal for parent lines */
+}
+
+/* arrowhead color to match connector */
+marker#arrow path {
+  fill: #00a896;
+}
+
+
+      .tooltip {
+        position: absolute; display: none; background: #ffffff; border-radius: 8px; padding: 10px;
+        box-shadow: var(--shadow); max-width: 360px; border: 1px solid rgba(11, 99, 214, 0.08); font-size: 14px;
+      }
+      .tooltip h4 { margin: 0 0 6px 0; font-size: 15px; }
+      .tooltip p { margin: 0; font-size: 13px; line-height: 1.3; }
+
+      .sidepanel {
+        position: absolute; right: 12px; top: 12px; width: 380px; max-width: 40%; height: 76%;
+        background: white; border-radius: 10px; box-shadow: var(--shadow); padding: 16px; display: none;
+        overflow: auto; border: 1px solid rgba(11, 99, 214, 0.06);
+      }
+      .sidepanel h3 { margin: 0 0 8px 0; font-size: 18px; }
+      .sidepanel .close { position: absolute; right: 8px; top: 6px; cursor: pointer; }
+
+      .link-btn{ display:inline-block;padding:6px 10px;border-radius:6px;border:1px solid rgba(11,99,214,0.1);background:#fff;font-size:13px;margin-left:8px;cursor:pointer }
+      .linked-item { opacity: .95; font-size: 13px; margin-bottom: 8px; }
+      .linked-item .desc { opacity: .75; font-size: 12px; margin-top: 3px; }
+
+      .stakeholders { margin-top:8px; margin-bottom: 10px; font-size: 14px; }
+      .stakeholders a { color: var(--blue-700); text-decoration: none; }
+      .stakeholders a:hover { text-decoration: underline; }
+
+      @media (max-width: 700px) { .sidepanel { display: none !important; } }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <div id="canvas" role="application" aria-label="Corporate hierarchy diagram">
+        <!-- Tooltip and sidepanel (HTML overlays) -->
+        <div id="tooltip" class="tooltip" role="dialog" aria-hidden="true"></div>
+
+        <div id="sidepanel" class="sidepanel" aria-hidden="true">
+          <button class="close" aria-label="Close panel" onclick="closePanel()">✕</button>
+          <div id="panel-content"></div>
+        </div>
+
+        <!-- SVG container -->
+        <svg id="svgRoot" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet" tabindex="0">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b90ff" />
+            </marker>
+          </defs>
+          <g id="connectors"></g>
+          <g id="nodes"></g>
+        </svg>
+      </div>
+    </div>
+
+    <script>
+      /*************************************************************************
+       * Sample data (JSON) - Qatar Energy and subsidiaries
+       *************************************************************************/
+      const DATA = {
+        parent: {
+          id: "qatar-energy",
+          name: "Qatar Energy",
+          type: "Parent",
+          link: "https://www.qatarenergy.qa",
+          shareholders: "State of Qatar (100%)",
+          financials: "FY23 Revenue: $82B USD, Employees: 12,000+",
+        },
+
+        subsidiaries: [
+          {
+            id: "qamco",
+            name: "QAMCO",
+            type: "Subsidiary",
+            link: "https://presales.businessbywire.com/appgts/businessnext/detail/Account?x=efa8kjuwhuercg9b8q9czf5twcg74dfqc7xueyc6lkh79naba6qa",
+            Shareholders: "Qatar Energy (80%), International Partners (20%)",
+            Financials: "FY23 Revenue: $2.1B USD",
+            KeyStakeholders: [
+              {
+                name: "Mr. Yazed Abdul Rahman Al-Hamid",
+                role: "CFO",
+                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=6uxajv6x75sajr77xtllu3hzv4xn4bzggs687lcfbf752kqlntm52u4uazpafxctp94qh992z32lyfmvd5ktwvtdxe3kd4f76apsy8yuw25y983kh4hfbwleskmxkd8e494s8e8fqytqa7e69lkcv96dm574qglulabark7vcu2jyjuvhmh7sx4ajrzcj6dksx23be39vpwdx2dztzed6zbmckwfetzswr44mgrbvqsptskeynuq"
+              },
+              {
+                name: "Mr. Mohammed T. Al-Nahhas",
+                role: "CEO",
+                link: "https://presales.businessbywire.com/appgts/businessnext/detail/Contact?x=6uxajv6x75sajr77xtllu3hzv4xn4bzggs687lcfbf752kqlntm52u4uazpafxctp94qh992z32lyfmvd5ktwvtdxe3kd4f76apsy8yuw25y983kh4hfbwleskmxkd8e494s8e8fqytqa7e69lkcv96dm574qglulabark7vcu2jyjuvhmh7sx4ajrzcj6dksx23be39vpwdnzjc3nqnhllwc7ytx8rzgvavtewgz4m4n8brpbba"
+              }
+            ],
+            dealers: [
+              {
+                id: "d1",
+                name: "Gulf Distribution Partners",
+                region: "Qatar",
+                desc: "Primary regional distributor",
+                link: "https://example.com/gulf-dist"
+              }
+            ],
+            suppliers: [
+              {
+                id: "s1",
+                name: "TechChem Industries",
+                region: "UAE",
+                desc: "Chemical equipment supplier",
+                link: "https://example.com/techchem"
+              }
+            ],
+            accounts: [
+              {
+                id: "a1",
+                name: "Qatar National Bank",
+                region: "Qatar",
+                desc: "Primary banking operations",
+                link: "https://example.com/qnb-corp"
+              }
+            ],
+            holdings: [
+              {
+                id: "h1",
+                name: "QAMCO Investment",
+                region: "Qatar",
+                desc: "Strategic investment vehicle",
+                link: "https://example.com/qamco-holdings"
+              }
+            ]
+          },
+
+          {
+            id: "qp",
+            name: "Qatar Petroleum International",
+            type: "Subsidiary",
+            link: "https://www.qatarenergy.qa/qpi",
+            shareholders: "Qatar Energy (100%)",
+            financials: "FY23 Revenue: $15.8B USD",
+            KeyStakeholders: [
+              { name: "Saad Al-Kaabi", role: "Chairman", link: "#" }
+            ],
+            suppliers: [
+              {
+                id: "s3",
+                name: "Marine Equipment Solutions",
+                region: "Norway",
+                desc: "Offshore equipment provider",
+                link: "https://example.com/marine-eq"
+              }
+            ],
+            accounts: [
+              {
+                id: "a2",
+                name: "Commercial Bank",
+                region: "Qatar",
+                desc: "Treasury & foreign exchange",
+                link: "https://example.com/cb-intl"
+              }
+            ],
+            holdings: [
+              {
+                id: "h2",
+                name: "QPI Global Investments",
+                region: "Luxembourg",
+                desc: "International holdings",
+                link: "https://example.com/qpi-global"
+              }
+            ]
+          },
+
+          {
+            id: "qafco",
+            name: "Qatar Fertiliser Company",
+            type: "Subsidiary",
+            link: "https://www.qafco.qa",
+            shareholders: "Qatar Energy (75%), Yara International (25%)",
+            financials: "FY23 Revenue: $1.8B USD",
+            keyStakeholders: [
+              { name: "Khalid Al-Mana", role: "Managing Director", link: "#" }
+            ],
+            suppliers: [
+              {
+                id: "s5",
+                name: "Industrial Systems Corp",
+                region: "Germany",
+                desc: "Process automation systems",
+                link: "https://example.com/industrial-sys"
+              }
+            ],
+            accounts: [
+              {
+                id: "a3",
+                name: "Doha Bank Corporate",
+                region: "Qatar",
+                desc: "Operations & trade finance",
+                link: "https://example.com/doha-bank"
+              }
+            ],
+            holdings: [
+              {
+                id: "h3",
+                name: "QAFCO Ventures",
+                region: "Qatar",
+                desc: "Innovation & R&D investments",
+                link: "https://example.com/qafco-ventures"
+              }
+            ]
+          }
+        ]
+      };
+
+      /*************************************************************************
+       * Layout configuration
+       *************************************************************************/
+      const cfg = {
+        svgW: 1200, svgH: 700, marginTop: 60, parentY: 80, subsidiaryY: 220, childStartY: 330,
+        subsidiarySpacing: 340,
+        subsidiaryBox: { w: 260, h: 84 }, parentBox: { w: 340, h: 96 }, childBox: { w: 200, h: 64 },
+        childGapX: 20, childGapY: 100,
+      };
+
+      const svg = document.getElementById("svgRoot");
+      const nodesGroup = document.getElementById("nodes");
+      const connGroup = document.getElementById("connectors");
+      const tooltip = document.getElementById("tooltip");
+      const sidepanel = document.getElementById("sidepanel");
+      const panelContent = document.getElementById("panel-content");
+
+      function render() {
+        nodesGroup.innerHTML = "";
+        connGroup.innerHTML = "";
+
+        // Parent position: top center
+        const centerX = cfg.svgW / 2;
+        const pX = centerX - cfg.parentBox.w / 2;
+        const pY = cfg.parentY;
+        const parentNode = { x: pX, y: pY, w: cfg.parentBox.w, h: cfg.parentBox.h, data: DATA.parent };
+
+        // Subsidiaries
+        const nSubs = DATA.subsidiaries.length;
+        const totalWidth = (nSubs - 1) * cfg.subsidiarySpacing;
+        const startX = centerX - totalWidth / 2 - cfg.subsidiaryBox.w / 2;
+
+        const subsNodes = DATA.subsidiaries.map((s, i) => ({
+          x: startX + i * cfg.subsidiarySpacing,
+          y: cfg.subsidiaryY,
+          w: cfg.subsidiaryBox.w,
+          h: cfg.subsidiaryBox.h,
+          data: s
+        }));
+
+        // Connect parent -> subs
+        subsNodes.forEach((sub) => {
+          const from = { x: parentNode.x + parentNode.w / 2, y: parentNode.y + parentNode.h };
+          const to = { x: sub.x + sub.w / 2, y: sub.y };
+          drawOrthogonalConnector(from, to, "connector parent");
+        });
+
+        // Draw parent
+        drawNode(parentNode, "parent");
+
+        // Draw subs + children
+        subsNodes.forEach((sub, si) => {
+          drawNode(sub, "subsidiary");
+
+          const childGroups = [];
+          const sdata = sub.data;
+
+          // Dealers - left
+          (sdata.dealers || []).forEach((d, idx) => {
+            let x = sub.x - 200 - idx * (cfg.childBox.w + cfg.childGapX);
+            let y = cfg.childStartY + idx * (cfg.childGapY / 2) + si * 10;
+            childGroups.push({ x, y, w: cfg.childBox.w, h: cfg.childBox.h, data: d, kind: "Dealer" });
+          });
+
+          // Suppliers - right
+          (sdata.suppliers || []).forEach((d, idx) => {
+            const x = sub.x + sub.w + 60 + idx * (cfg.childBox.w + cfg.childGapX);
+            const y = cfg.childStartY + idx * (cfg.childGapY / 2) + si * 10;
+            childGroups.push({ x, y, w: cfg.childBox.w, h: cfg.childBox.h, data: d, kind: "Supplier" });
+          });
+
+          // Accounts - near-right (shift down for special names)
+          (sdata.accounts || []).forEach((d, idx) => {
+            const x = sub.x + sub.w + 90 + idx * (cfg.childBox.w + cfg.childGapX);
+            let y = cfg.childStartY + 180 + idx * (cfg.childBox.h + 20) + si * 6;
+            if (d.name && d.name.toLowerCase().includes("qatar national bank")) y += 80;
+            if (d.name && d.name.toLowerCase().includes("commercial bank")) y += 80;
+            childGroups.push({ x, y, w: cfg.childBox.w, h: cfg.childBox.h, data: d, kind: "Account" });
+          });
+
+          // Holdings - below sub
+          (sdata.holdings || []).forEach((d, idx) => {
+            const x = sub.x + (sub.w - cfg.childBox.w) / 2 + idx * (cfg.childBox.w + 8);
+            let y = sub.y + sub.h + 140 + si * 6;
+            if (d.name) {
+              const nm = d.name.toLowerCase();
+              if (nm.includes("qpi global") || nm.includes("qafco ventures")) y += 40;
+            }
+            childGroups.push({ x, y, w: cfg.childBox.w, h: cfg.childBox.h, data: d, kind: "Holding" });
+          });
+
+          // Draw child connectors & nodes
+          childGroups.forEach((c) => {
+            const from = { x: sub.x + sub.w / 2, y: sub.y + sub.h };
+            const to = { x: c.x + c.w / 2, y: c.y };
+            drawOrthogonalConnector(from, to, "connector");
+            drawNode(c, "child", c.kind);
+          });
+        });
+      }
+
+      function drawNode(nodeObj, variant, kind) {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.classList.add("node-box");
+        if (variant) g.classList.add(variant);
+        if (variant === "parent" || variant === "subsidiary") g.classList.add("centered");
+
+        const { x, y, w, h } = nodeObj;
+
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", x); rect.setAttribute("y", y);
+        rect.setAttribute("width", w); rect.setAttribute("height", h);
+        rect.setAttribute("rx", 12); rect.setAttribute("ry", 12);
+        rect.classList.add("node-rect");
+        g.appendChild(rect);
+
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        title.setAttribute("x", g.classList.contains("centered") ? x + w / 2 : x + 14);
+        title.setAttribute("y", y + 34);
+        title.setAttribute("class", "node-title");
+        title.textContent = nodeObj.data.name;
+        g.appendChild(title);
+
+        const subtitle = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        subtitle.setAttribute("x", g.classList.contains("centered") ? x + w / 2 : x + 14);
+        subtitle.setAttribute("y", y + 58);
+        subtitle.setAttribute("class", "node-sub");
+        if (variant === "parent") subtitle.textContent = nodeObj.data.type || "Parent";
+        else if (variant === "subsidiary") subtitle.textContent = nodeObj.data.type || "Subsidiary";
+        else subtitle.textContent = kind || "";
+        g.appendChild(subtitle);
+
+        // Interactive overlay
+        const overlay = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        overlay.setAttribute("x", x); overlay.setAttribute("y", y);
+        overlay.setAttribute("width", w); overlay.setAttribute("height", h);
+        overlay.setAttribute("fill", "transparent"); overlay.setAttribute("tabindex", "0");
+        const labelParts = [nodeObj.data.name, variant]; if (kind) labelParts.push(kind);
+        overlay.setAttribute("aria-label", labelParts.join(" "));
+        overlay.style.cursor = "pointer";
+
+        overlay.addEventListener("mouseenter", (ev) => showTooltip(nodeObj, ev));
+        overlay.addEventListener("mouseleave", hideTooltip);
+        overlay.addEventListener("focus", (ev) => showTooltip(nodeObj, ev));
+        overlay.addEventListener("blur", hideTooltip);
+        overlay.addEventListener("click", () => openPanel(nodeObj, variant, kind));
+        overlay.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { openPanel(nodeObj, variant, kind); e.preventDefault(); }
+        });
+
+        g.appendChild(overlay);
+        nodesGroup.appendChild(g);
+      }
+
+      function drawOrthogonalConnector(from, to, cls) {
+        const midY = (from.y + to.y) / 2;
+        const points = [
+          `${from.x},${from.y}`, `${from.x},${midY}`,
+          `${to.x},${midY}`, `${to.x},${to.y}`
+        ].join(" ");
+
+        const poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+        poly.setAttribute("points", points);
+        poly.setAttribute("class", cls);
+        poly.setAttribute("fill", "none");
+        poly.setAttribute("stroke-linecap", "round");
+        poly.setAttribute("stroke-linejoin", "round");
+        poly.setAttribute("marker-end", "url(#arrow)");
+        connGroup.appendChild(poly);
+      }
+
+      // Tooltip behavior
+      function showTooltip(nodeObj, ev) {
+        const d = nodeObj.data;
+        const type = (d.type || "").toLowerCase();
+        const isParent = type.includes("parent");
+        const isSubs = type.includes("subsidiary");
+
+        let html = "";
+        if (isParent || isSubs) {
+          html += `<h4>${escapeHtml(d.name)}</h4>`;
+          html += `<p><strong>Shareholders:</strong> ${escapeHtml(d.shareholders || d.Shareholders || "—")}</p>`;
+          html += `<p><strong>Key data:</strong> ${escapeHtml(d.financials || d.Financials || "—")}</p>`;
+        } else {
+          html += `<h4>${escapeHtml(d.name)}</h4>`;
+          html += `<p><strong>Type:</strong> ${escapeHtml(ev.target.getAttribute("aria-label") || "")}</p>`;
+          html += `<p><strong>Region:</strong> ${escapeHtml(d.region || "—")}</p>`;
+          html += `<p>${escapeHtml(d.desc || "")}</p>`;
+        }
+
+        tooltip.innerHTML = html;
+        tooltip.style.display = "block";
+        tooltip.setAttribute("aria-hidden", "false");
+
+        const rect = document.getElementById("canvas").getBoundingClientRect();
+        let pageX, pageY;
+        if (ev.clientX && ev.clientY) { pageX = ev.clientX; pageY = ev.clientY; }
+        else { pageX = rect.left + nodeObj.x + nodeObj.w / 2; pageY = rect.top + nodeObj.y + nodeObj.h / 2; }
+
+        const offsetX = 14, offsetY = 10;
+        tooltip.style.left = Math.min(pageX - rect.left + offsetX, rect.width - 320) + "px";
+        tooltip.style.top = Math.min(pageY - rect.top + offsetY, rect.height - 80) + "px";
+      }
+
+      function hideTooltip() {
+        tooltip.style.display = "none";
+        tooltip.setAttribute("aria-hidden", "true");
+      }
+
+      // Side panel
+      function openPanel(nodeObj, variant, kind) {
+        sidepanel.style.display = "block";
+        sidepanel.setAttribute("aria-hidden", "false");
+        panelContent.innerHTML = buildPanelHtml(nodeObj.data, variant, kind);
+      }
+      function closePanel() {
+        sidepanel.style.display = "none";
+        sidepanel.setAttribute("aria-hidden", "true");
+      }
+
+      // Unified, fixed panel builder
+      // build panel HTML: renders structured stakeholders + linked entities
+function buildPanelHtml(data, variant, kind) {
+  let html = `<h3>${escapeHtml(data.name)}</h3>`;
+
+  // Parent node
+  if (variant === "parent" || (data.type && data.type.toLowerCase().includes("parent"))) {
+    html += `<p><strong>Type:</strong> Parent Company</p>`;
+    html += `<p><strong>Shareholders:</strong> ${escapeHtml(data.shareholders || data.Shareholders || "—")}</p>`;
+    html += `<p><strong>Financials:</strong> ${escapeHtml(data.financials || data.Financials || "—")}</p>`;
+    if (data.link) {
+      html += `<hr/><p style="opacity:.8;font-size:13px">Actions:
+        <button class="link-btn" onclick="window.open('${escapeJs(data.link)}','_blank')">View profile</button>
+      </p>`;
+    }
+    return html;
+  }
+
+  // Subsidiary node
+  if (variant === "subsidiary" || (data.type && data.type.toLowerCase().includes("subsidiary"))) {
+    html += `<p><strong>Type:</strong> Subsidiary</p>`;
+    html += `<p><strong>Shareholders:</strong> ${escapeHtml(data.Shareholders || data.shareholders || "—")}</p>`;
+    html += `<p><strong>Financials:</strong> ${escapeHtml(data.Financials || data.financials || "—")}</p>`;
+
+    // Key Stakeholders
+    const stakeholders = data.KeyStakeholders || data.keyStakeholders || [];
+    if (stakeholders.length > 0) {
+      html += `<hr/><div class="stakeholders"><strong>Key Stakeholders:</strong>
+        <ul style="padding-left:16px;margin:6px 0 0 0">`;
+      stakeholders.forEach(sh => {
+        html += `<li>`;
+        if (sh.link && sh.link !== "#") {
+          html += `<a href="${escapeJs(sh.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(sh.name)}</a>`;
+        } else {
+          html += escapeHtml(sh.name);
+        }
+        if (sh.role) html += ` - <span style="opacity:0.8">${escapeHtml(sh.role)}</span>`;
+        html += `</li>`;
+      });
+      html += `</ul></div>`;
+    }
+
+    // ✅ Linked Entities section (added)
+    const groups = [
+      { title: "Dealers", items: data.dealers },
+      { title: "Suppliers", items: data.suppliers },
+      { title: "Accounts", items: data.accounts },
+      { title: "Holdings", items: data.holdings },
+    ];
+
+    const hasLinked = groups.some((g) => g.items && g.items.length > 0);
+    if (hasLinked) {
+      html += `<hr/><div><strong>Linked entities</strong>`;
+      groups.forEach((group) => {
+        if (group.items && group.items.length > 0) {
+          html += `<div style="margin-top:10px"><strong>${group.title}</strong>
+            <ul style="list-style:none;padding-left:0;margin:4px 0 0 0;">`;
+          group.items.forEach((item) => {
+            html += `<li style="margin-bottom:8px;">
+              <div style="font-weight:600">${escapeHtml(item.name)}</div>`;
+            if (item.region)
+              html += `<div style="opacity:.8;font-size:13px;">${escapeHtml(item.region)}</div>`;
+            if (item.desc)
+              html += `<div style="font-size:12px;opacity:.7;">${escapeHtml(item.desc)}</div>`;
+            html += `</li>`;
+          });
+          html += `</ul></div>`;
+        }
+      });
+      html += `</div>`;
+    }
+
+    if (data.link) {
+      html += `<hr/><p style="opacity:.8;font-size:13px">Actions:
+        <button class="link-btn" onclick="window.open('${escapeJs(data.link)}','_blank')">View profile</button>
+      </p>`;
+    }
+    return html;
+  }
+
+  // Child nodes
+  const childKind = kind || (data.kind ? data.kind : "Entity");
+  html += `<p><strong>Type:</strong> ${escapeHtml(childKind)}</p>`;
+  if (data.region) html += `<p><strong>Region:</strong> ${escapeHtml(data.region)}</p>`;
+  if (data.desc) html += `<p><strong>Description:</strong> ${escapeHtml(data.desc)}</p>`;
+
+  if (data.link) {
+    html += `<hr/><p style="opacity:.8;font-size:13px">Actions:
+      <button class="link-btn" onclick="window.open('${escapeJs(data.link)}','_blank')">Open link</button>
+    </p>`;
+  }
+
+  return html;
+}
+
+
+      // helpers
+      function escapeHtml(s) {
+        if (s === undefined || s === null) return "";
+        return String(s).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+      }
+      function escapeJs(s) {
+        if (!s) return "";
+        return String(s).replaceAll('"', '&quot;').replaceAll("'", "\\'");
+      }
+
+      // initial render
+      render();
+
+      // Optional external refresh
+      window.refreshHierarchy = function (newData) {
+        if (newData) Object.assign(DATA, newData);
+        render();
+      };
+
+      // Esc key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") { hideTooltip(); closePanel(); }
+      });
+    </script>
+  </body>
+</html>
